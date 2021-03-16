@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Wallet.Api.Models;
+using Wallet.Api.Context;
 
 namespace Wallet.Api.Controllers
 {
@@ -17,23 +17,39 @@ namespace Wallet.Api.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly WalletContext _walletContext;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, WalletContext walletContext)
         {
             _logger = logger;
+            _walletContext = walletContext;
         }
 
+        //[HttpGet]
+        //public IEnumerable<WeatherForecast> Get()
+        //{
+        //    var rng = new Random();
+        //    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        //    {
+        //        Date = DateTime.Now.AddDays(index),
+        //        TemperatureC = rng.Next(-20, 55),
+        //        Summary = _summaries[rng.Next(_summaries.Length)]
+        //    })
+        //    .ToArray();
+        //}
+
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<Income> Get()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            _walletContext.Incomes.Add(new Income
             {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = _summaries[rng.Next(_summaries.Length)]
-            })
-            .ToArray();
+                Name = "Adam",
+                Amount = 1235.45,
+                Date = DateTime.Now,
+                Comment = "Ez egy teszt"
+            });
+            _walletContext.SaveChanges();
+            return _walletContext.Incomes;
         }
     }
 }

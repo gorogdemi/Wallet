@@ -1,22 +1,25 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Wallet.Api.Context;
 
 namespace Wallet.Api
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        public IConfiguration Configuration { get; }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // számit a sorrend
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -39,8 +42,18 @@ namespace Wallet.Api
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // I -> interface
+        // dependency injection
+        // ha itt nincs megadva, akkor elszáll nullpointerrel
+        // walletcontext használjon sql szervert, a connection string pedig az appsettings-bõl jön
+        // appsettings.Development.json
+
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<WalletContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("Database"));
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
