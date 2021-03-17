@@ -1,0 +1,92 @@
+﻿@page "/register"
+@inject NavigationManager NavManager
+
+<h1>Regisztráció</h1>
+
+@if (showError)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@errorText</p>
+    </div>
+}
+
+<EditForm Model="model" OnValidSubmit="DoRegister" class="card card-body bg-light mt-5">
+    <DataAnnotationsValidator />
+
+    <div class="form-group row">
+        <label for="last-name" class="col-md-2 col-form-label">Vezetéknév:</label>
+        <div class="col-md-10">
+            <InputText id="last-name" class="form-control" @bind-Value="model.LastName" />
+            <ValidationMessage For="() => model.LastName" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="first-name" class="col-md-2 col-form-label">Keresztnév:</label>
+        <div class="col-md-10">
+            <InputText id="first-name" class="form-control" @bind-Value="model.FirstName" />
+            <ValidationMessage For="() => model.FirstName" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="email" class="col-md-2 col-form-label">E-mail cím:</label>
+        <div class="col-md-10">
+            <InputText id="email" type="email" class="form-control" @bind-Value="model.Email" />
+            <ValidationMessage For="() => model.Email" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="email-confirm" class="col-md-2 col-form-label">E-mail cím megerősítése:</label>
+        <div class="col-md-10">
+            <InputText id="email-confirm" type="email" class="form-control" @bind-Value="model.EmailConfirm" />
+            <ValidationMessage For="() => model.EmailConfirm" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="password" class="col-md-2 col-form-label">Jelszó:</label>
+        <div class="col-md-10">
+            <InputText id="password" type="password" class="form-control" @bind-Value="model.Password" />
+            <ValidationMessage For="() => model.Password" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="password-confirm" class="col-md-2 col-form-label">Jelszó megerősítése:</label>
+        <div class="col-md-10">
+            <InputText id="password-confirm" type="password" class="form-control" @bind-Value="model.PasswordConfirm" />
+            <ValidationMessage For="() => model.PasswordConfirm" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary">Regisztráció</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private RegisterUserModel model = new();
+    private bool showError = false;
+    private string errorText = "";
+
+    private async Task DoRegister()
+    {
+        showError = false;
+
+        var result = await Task.FromResult("success"); //TODO Do real register here
+
+        if (result is not null)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorText = "Hiba történt a regisztráció során.";
+            showError = true;
+        }
+    }
+}
