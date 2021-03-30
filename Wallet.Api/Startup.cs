@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Wallet.Api.Context;
+using Wallet.Api.Domain;
 using Wallet.Api.Options;
 
 namespace Wallet.Api
@@ -66,7 +66,9 @@ namespace Wallet.Api
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Database"));
             });
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+
+            services
+                .AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<WalletContext>();
 
             services.AddAuthentication(options =>
@@ -90,19 +92,20 @@ namespace Wallet.Api
             });
 
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Wallet.Api", Version = "v1" });
 
                 var security = new Dictionary<OpenApiSecurityScheme, IEnumerable<string>>
                 {
-                    { new OpenApiSecurityScheme { Type = SecuritySchemeType.ApiKey }, new string[0] }
+                    { new OpenApiSecurityScheme { Type = SecuritySchemeType.ApiKey }, Array.Empty<string>() }
                 };
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization Header Using The Bearer Scheme",
-                    Name = "Autorization",
+                    Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });

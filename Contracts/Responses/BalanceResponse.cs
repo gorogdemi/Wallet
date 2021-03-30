@@ -1,6 +1,6 @@
-﻿namespace Domain
+﻿namespace Wallet.Contracts.Responses
 {
-    public class Balance
+    public class BalanceResponse
     {
         public double BankAccount { get; set; }
 

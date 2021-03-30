@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Domain.Responses
+namespace Wallet.Contracts.Responses
 {
     public class AuthenticationFailedResponse
     {

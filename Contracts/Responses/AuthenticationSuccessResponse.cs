@@ -1,4 +1,4 @@
-﻿namespace Domain.Responses
+﻿namespace Wallet.Contracts.Responses
 {
     public class AuthenticationSuccessResponse
     {

@@ -1,39 +1,39 @@
 ﻿using System.Linq;
-using Domain;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Wallet.Api.Context;
+using Wallet.Api.Domain;
+using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
-    public class TransactionController : ControllerBase
+    public class BalanceController : ControllerBase
     {
-        private readonly ILogger<TransactionController> _logger;
         private readonly WalletContext _walletContext;
 
-        public TransactionController(ILogger<TransactionController> logger, WalletContext walletContext)
+        public BalanceController(WalletContext walletContext)
         {
-            _logger = logger;
             _walletContext = walletContext;
         }
 
         [HttpGet]
-        public Balance Get()
+        public async Task<IActionResult> Get()
         {
-            var expenses = _walletContext.Transactions.Where(x => x.Type == TransactionType.Expense).Sum(x => x.Amount);
-            var incomes = _walletContext.Transactions.Where(x => x.Type == TransactionType.Income).Sum(x => x.Amount);
+            var expenses = await _walletContext.Transactions.Where(x => x.Type == TransactionType.Expense).SumAsync(x => x.Amount);
+            var incomes = await _walletContext.Transactions.Where(x => x.Type == TransactionType.Income).SumAsync(x => x.Amount);
 
-            return new Balance
+            return Ok(new BalanceResponse
             {
                 Full = incomes - expenses,
                 Cash = incomes - expenses,
                 BankAccount = 0
-            };
+            });
         }
     }
 }

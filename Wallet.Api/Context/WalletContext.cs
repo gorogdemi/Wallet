@@ -1,6 +1,6 @@
-﻿using Domain;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Wallet.Api.Domain;
 
 namespace Wallet.Api.Context
 {

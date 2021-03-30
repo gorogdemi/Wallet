@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Requests
+namespace Wallet.Contracts.Requests
 {
     public class LoginRequest
     {

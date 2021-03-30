@@ -4,14 +4,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Domain;
-using Domain.Requests;
-using Domain.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Wallet.Api.Domain;
 using Wallet.Api.Options;
+using Wallet.Contracts.Requests;
+using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
 {
@@ -31,34 +31,36 @@ namespace Wallet.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-
-            if (existingUser != null)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(new AuthenticationFailedResponse
                 {
-                    Errors = new[] { "User with this e-mail address already exists." }
+                    Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage))
                 });
             }
 
-            var newUser = new User
-            {
-                Email = request.Email,
-                UserName = request.Email
-            };
+            var user = await _userManager.FindByEmailAsync(request.Email);
 
-            var createdUser = await _userManager.CreateAsync(newUser, request.Password);
-
-            if (!createdUser.Succeeded)
+            if (user == null)
             {
                 return BadRequest(new AuthenticationFailedResponse
                 {
-                    Errors = createdUser.Errors.Select(x => x.Description)
+                    Errors = new[] { "User does not exists." }
+                });
+            }
+
+            var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
+
+            if (!validPassword)
+            {
+                return BadRequest(new AuthenticationFailedResponse
+                {
+                    Errors = new[] { "Username or password is invalid." }
                 });
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var token = GetToken(newUser, tokenHandler);
+            var token = GetToken(user, tokenHandler);
 
             return Ok(new AuthenticationSuccessResponse
             {
@@ -69,6 +71,14 @@ namespace Wallet.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegistrationRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new AuthenticationFailedResponse
+                {
+                    Errors = ModelState.Values.SelectMany(x => x.Errors.Select(y => y.ErrorMessage))
+                });
+            }
+
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (existingUser != null)
