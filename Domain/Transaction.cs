@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain
 {
-    public class Income
+    public class Transaction
     {
         public double Amount { get; set; }
 
@@ -18,5 +18,9 @@ namespace Domain
 
         [Required, MaxLength(100)]
         public string Name { get; set; }
+
+        public TransactionType Type { get; set; }
+
+        public virtual User User { get; set; }
     }
 }
