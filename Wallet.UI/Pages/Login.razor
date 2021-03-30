@@ -1,0 +1,60 @@
+﻿@page "/login"
+@inject NavigationManager NavManager
+
+<h1>Bejelentkezés</h1>
+
+@if (showError)
+{
+    <div class="alert alert-danger" role="alert">
+        <p>@errorText</p>
+    </div>
+}
+
+<EditForm Model="model" OnValidSubmit="DoLogin" class="card card-body bg-light mt-5">
+    <DataAnnotationsValidator />
+
+    <div class="form-group row">
+        <label for="email" class="col-md-2 col-form-label">E-mail cím:</label>
+        <div class="col-md-10">
+            <InputText id="email" type="email" class="form-control" @bind-Value="model.Email" />
+            <ValidationMessage For="() => model.Email" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="password" class="col-md-2 col-form-label">Jelszó:</label>
+        <div class="col-md-10">
+            <InputText id="password" type="password" class="form-control" @bind-Value="model.Password" />
+            <ValidationMessage For="() => model.Password" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary">Bejelentkezés</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private LoginUserModel model = new();
+    private bool showError = false;
+    private string errorText = "";
+
+    private async Task DoLogin()
+    {
+        showError = false;
+
+        var result = await Task.FromResult("success"); //TODO Do real login here
+
+        if (result is not null)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorText = "Hiba történt a bejelentkezés során.";
+            showError = true;
+        }
+    }
+}
