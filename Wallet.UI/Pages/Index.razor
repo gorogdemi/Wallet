@@ -1,7 +1,27 @@
 ﻿@page "/"
+@inject HttpClient HttpClient
+@attribute [Authorize]
 
-<h1>Pénztárcák</h1>
+<h1>Egyenleg</h1>
 
 <br />
 
-<h2><span class="oi oi-wrench" aria-hidden="true"></span> Fejlesztés alatt!</h2>
+@if (model is null)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <p>Teljes: @model.Full Ft</p>
+    <p>Készpénz: @model.Cash Ft</p>
+    <p>Bankszámla: @model.BankAccount Ft</p>
+}
+
+@code {
+    private BalanceResponse model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await HttpClient.GetFromJsonAsync<BalanceResponse>("api/balance");
+    }
+}

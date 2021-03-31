@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Wallet.Api.Context;
 using Wallet.Api.Domain;
@@ -18,12 +19,12 @@ namespace Wallet.Api
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         // számit a sorrend
@@ -35,6 +36,12 @@ namespace Wallet.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
             }
+
+            app.UseCors(policy => policy
+                .WithOrigins("http://localhost:4200", "https://localhost:4201")
+                .AllowAnyMethod()
+                .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization)
+                .AllowCredentials());
 
             app.UseHttpsRedirection();
 
@@ -61,6 +68,8 @@ namespace Wallet.Api
         {
             var jwtOptionSection = Configuration.GetSection("JwtOptions");
             services.Configure<JwtOptions>(jwtOptionSection);
+
+            services.AddCors();
 
             services.AddDbContext<WalletContext>(options =>
             {
