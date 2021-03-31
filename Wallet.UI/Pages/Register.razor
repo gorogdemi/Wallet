@@ -1,5 +1,6 @@
 ﻿@page "/register"
 @inject NavigationManager NavManager
+@inject AuthenticationService AuthenticationService
 
 <h1>Regisztráció</h1>
 
@@ -69,7 +70,7 @@
 </EditForm>
 
 @code {
-    private RegisterUserModel model = new();
+    private RegistrationRequest model = new();
     private bool showError = false;
     private string errorText = "";
 
@@ -77,9 +78,9 @@
     {
         showError = false;
 
-        var result = await Task.FromResult("success"); //TODO Do real register here
+        var success = await AuthenticationService.Register(model);
 
-        if (result is not null)
+        if (success)
         {
             NavManager.NavigateTo("/");
         }

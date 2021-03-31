@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @inject NavigationManager NavManager
+@inject IAuthenticationService AuthenticationService
 
 <h1>Bejelentkezés</h1>
 
@@ -37,7 +38,7 @@
 </EditForm>
 
 @code {
-    private LoginUserModel model = new();
+    private LoginRequest model = new();
     private bool showError = false;
     private string errorText = "";
 
@@ -45,9 +46,9 @@
     {
         showError = false;
 
-        var result = await Task.FromResult("success"); //TODO Do real login here
+        var success = await AuthenticationService.Login(model);
 
-        if (result is not null)
+        if (success)
         {
             NavManager.NavigateTo("/");
         }
