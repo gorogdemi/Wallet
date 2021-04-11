@@ -6,6 +6,8 @@ namespace Wallet.Api.Context
 {
     public class WalletContext : IdentityDbContext<User>
     {
+        public virtual DbSet<Category> Categories { get; set; }
+
         public virtual DbSet<Transaction> Transactions { get; set; }
 
         public WalletContext(DbContextOptions<WalletContext> options) : base(options)

@@ -33,14 +33,13 @@ namespace Wallet.Api
         // számit a sorrend
         public void Configure(IApplicationBuilder app, WalletContext walletContext)
         {
-            walletContext.Database.Migrate();
-
-            if (_environment.IsDevelopment())
+            if (!_environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
+                walletContext.Database.Migrate();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
 
             app.UseCors(policy => policy
                 .WithOrigins("http://localhost:4200", "https://localhost:4201")
@@ -49,6 +48,8 @@ namespace Wallet.Api
                 .AllowCredentials());
 
             app.UseRouting();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
 
             app.UseAuthentication();
 
@@ -76,16 +77,12 @@ namespace Wallet.Api
 
             services.AddCors();
 
-            services.AddDbContext<WalletContext>(options =>
+            var provider = "SqlServer";
+            services.AddDbContext<WalletContext>(options => _ = provider switch
             {
-                if (_environment.IsDevelopment())
-                {
-                    options.UseSqlServer(_configuration.GetConnectionString("Database")).UseLazyLoadingProxies();
-                }
-                else
-                {
-                    options.UseNpgsql(_configuration.GetConnectionString("Database")).UseLazyLoadingProxies();
-                }
+                "Postgres" => options.UseNpgsql(_configuration.GetConnectionString("Postgres")),
+                "SqlServer" => options.UseSqlServer(_configuration.GetConnectionString("LocalDb")),
+                _ => throw new Exception($"Unsupported provider: {provider}")
             });
 
             services
