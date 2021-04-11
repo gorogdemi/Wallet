@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Wallet.Api.Context;
 
-namespace Wallet.Api.Migrations
+namespace Wallet.Api.PostgresMigrations
 {
     [DbContext(typeof(WalletContext))]
     partial class WalletContextModelSnapshot : ModelSnapshot
