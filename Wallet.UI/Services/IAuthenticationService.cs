@@ -5,10 +5,10 @@ namespace Wallet.UI
 {
     public interface IAuthenticationService
     {
-        Task<bool> Login(LoginRequest loginRequest);
+        Task<bool> LoginAsync(LoginRequest loginRequest);
 
-        Task Logout();
+        Task LogoutAsync();
 
-        Task<bool> Register(RegistrationRequest registrationRequest);
+        Task<bool> RegisterAsync(RegistrationRequest registrationRequest);
     }
 }

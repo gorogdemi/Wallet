@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,23 +20,26 @@ namespace Wallet.Api
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _environment = environment;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         // számit a sorrend
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, WalletContext walletContext)
         {
-            if (env.IsDevelopment())
+            if (!_environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
+                walletContext.Database.Migrate();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
 
             app.UseCors(policy => policy
                 .WithOrigins("http://localhost:4200", "https://localhost:4201")
@@ -43,9 +47,9 @@ namespace Wallet.Api
                 .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization)
                 .AllowCredentials());
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet.Api v1"));
 
             app.UseAuthentication();
 
@@ -66,14 +70,19 @@ namespace Wallet.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtOptionSection = Configuration.GetSection("JwtOptions");
+            var jwtOptionSection = _configuration.GetSection("JwtOptions");
             services.Configure<JwtOptions>(jwtOptionSection);
+
+            services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 
             services.AddCors();
 
-            services.AddDbContext<WalletContext>(options =>
+            var provider = "SqlServer";
+            services.AddDbContext<WalletContext>(options => _ = provider switch
             {
-                options.UseSqlServer(Configuration.GetConnectionString("Database"));
+                "Postgres" => options.UseNpgsql(_configuration.GetConnectionString("Postgres")),
+                "SqlServer" => options.UseSqlServer(_configuration.GetConnectionString("LocalDb")),
+                _ => throw new Exception($"Unsupported provider: {provider}")
             });
 
             services

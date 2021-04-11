@@ -1,6 +1,6 @@
 ﻿@page "/register"
 @inject NavigationManager NavManager
-@inject AuthenticationService AuthenticationService
+@inject IAuthenticationService AuthenticationService
 
 <h1>Regisztráció</h1>
 
@@ -78,7 +78,7 @@
     {
         showError = false;
 
-        var success = await AuthenticationService.Register(model);
+        var success = await AuthenticationService.RegisterAsync(model);
 
         if (success)
         {

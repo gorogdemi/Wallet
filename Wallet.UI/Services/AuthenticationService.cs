@@ -23,20 +23,20 @@ namespace Wallet.UI
             _authenticationStateProvider = authenticationStateProvider;
         }
 
-        public async Task<bool> Login(LoginRequest loginRequest)
+        public async Task<bool> LoginAsync(LoginRequest loginRequest)
         {
             var authResult = await _httpClient.PostAsJsonAsync("api/authentication/login", loginRequest);
             return await GetAuthenticationResponse(authResult);
         }
 
-        public async Task Logout()
+        public async Task LogoutAsync()
         {
             await _localStorage.RemoveItemAsync("authToken");
             ((JwtAuthenticationStateProvider)_authenticationStateProvider).NotifyUserLogout();
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
-        public async Task<bool> Register(RegistrationRequest registrationRequest)
+        public async Task<bool> RegisterAsync(RegistrationRequest registrationRequest)
         {
             var authResult = await _httpClient.PostAsJsonAsync("api/authentication/register", registrationRequest);
             return await GetAuthenticationResponse(authResult);

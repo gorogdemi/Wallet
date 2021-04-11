@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Wallet.Api.Context;
 using Wallet.Api.Domain;
+using Wallet.Api.Extensions;
 using Wallet.Contracts.Responses;
 
 namespace Wallet.Api.Controllers
@@ -25,14 +26,23 @@ namespace Wallet.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var expenses = await _walletContext.Transactions.Where(x => x.Type == TransactionType.Expense).SumAsync(x => x.Amount);
-            var incomes = await _walletContext.Transactions.Where(x => x.Type == TransactionType.Income).SumAsync(x => x.Amount);
+            var userId = HttpContext.GetUserId();
+
+            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId).ToListAsync();
+
+            var cashExpenses = transcations.Where(x => x.Type == TransactionType.Expense).Sum(x => x.CashAmount);
+            var cashIncomes = transcations.Where(x => x.Type == TransactionType.Income).Sum(x => x.CashAmount);
+            var bankExpenses = transcations.Where(x => x.Type == TransactionType.Expense).Sum(x => x.BankAmount);
+            var bankIncomes = transcations.Where(x => x.Type == TransactionType.Income).Sum(x => x.BankAmount);
+
+            var cash = cashIncomes - cashExpenses;
+            var bank = bankIncomes - bankExpenses;
 
             return Ok(new BalanceResponse
             {
-                Full = incomes - expenses,
-                Cash = incomes - expenses,
-                BankAccount = 0
+                Full = cash + bank,
+                Cash = cash,
+                BankAccount = bank
             });
         }
     }
