@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,18 +20,22 @@ namespace Wallet.Api
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _environment = environment;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         // számit a sorrend
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, WalletContext walletContext)
         {
-            if (env.IsDevelopment())
+            walletContext.Database.Migrate();
+
+            if (_environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -42,8 +47,6 @@ namespace Wallet.Api
                 .AllowAnyMethod()
                 .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization)
                 .AllowCredentials());
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -66,14 +69,23 @@ namespace Wallet.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtOptionSection = Configuration.GetSection("JwtOptions");
+            var jwtOptionSection = _configuration.GetSection("JwtOptions");
             services.Configure<JwtOptions>(jwtOptionSection);
+
+            services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto);
 
             services.AddCors();
 
             services.AddDbContext<WalletContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("Database"));
+                if (_environment.IsDevelopment())
+                {
+                    options.UseSqlServer(_configuration.GetConnectionString("Database")).UseLazyLoadingProxies();
+                }
+                else
+                {
+                    options.UseNpgsql(_configuration.GetConnectionString("Database")).UseLazyLoadingProxies();
+                }
             });
 
             services

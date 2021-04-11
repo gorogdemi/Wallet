@@ -1,18 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Wallet.Api.Domain
+namespace Wallet.Contracts.Requests
 {
-    public class Transaction
+    public class TransactionRequest
     {
         public double BankAmount { get; set; }
 
         public double CashAmount { get; set; }
 
-        public virtual Category Category { get; set; }
-
-        [ForeignKey(nameof(Category))]
         public int? CategoryId { get; set; }
 
         [MaxLength(255)]
@@ -20,17 +16,11 @@ namespace Wallet.Api.Domain
 
         public DateTime Date { get; set; }
 
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [Required, MaxLength(100)]
         public string Name { get; set; }
 
-        public TransactionType Type { get; set; }
+        public int Type { get; set; }
 
-        public virtual User User { get; set; }
-
-        [ForeignKey(nameof(User))]
         [Required]
         public string UserId { get; set; }
     }

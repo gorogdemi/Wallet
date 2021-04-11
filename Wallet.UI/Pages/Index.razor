@@ -1,27 +1,27 @@
 ﻿@page "/"
-@inject HttpClient HttpClient
+@inject IBalanceService _balanceService
 @attribute [Authorize]
 
 <h1>Egyenleg</h1>
 
 <br />
 
-@if (model is null)
+@if (_balance is null)
 {
     <div>Adatok betöltése...</div>
 }
 else
 {
-    <p>Teljes: @model.Full Ft</p>
-    <p>Készpénz: @model.Cash Ft</p>
-    <p>Bankszámla: @model.BankAccount Ft</p>
+    <p>Teljes: @_balance.Full Ft</p>
+    <p>Készpénz: @_balance.Cash Ft</p>
+    <p>Bankszámla: @_balance.BankAccount Ft</p>
 }
 
 @code {
-    private BalanceResponse model;
+    private BalanceResponse _balance;
 
     protected override async Task OnInitializedAsync()
     {
-        model = await HttpClient.GetFromJsonAsync<BalanceResponse>("api/balance");
+        _balance = await _balanceService.GetAsync();
     }
 }
