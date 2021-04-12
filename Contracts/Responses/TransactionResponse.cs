@@ -18,6 +18,8 @@ namespace Wallet.Contracts.Responses
 
         public string Name { get; set; }
 
+        public double SumAmount { get; set; }
+
         public int Type { get; set; }
     }
 }
