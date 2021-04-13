@@ -46,10 +46,11 @@ namespace Wallet.UI.Pages.Transactions
             if (!result)
             {
                 ErrorMessage = "Sikertelen tranzakció módosítás!";
-                return;
             }
-
-            NavigateToTransactions();
+            else
+            {
+                NavigateToTransactions();
+            }
         }
 
         protected void NavigateToTransactions() => NavigationManager.NavigateTo("transactions");
