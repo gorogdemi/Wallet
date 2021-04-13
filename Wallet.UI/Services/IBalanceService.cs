@@ -3,7 +3,7 @@ using Wallet.Contracts.Responses;
 
 namespace Wallet.UI.Services
 {
-    internal interface IBalanceService
+    public interface IBalanceService
     {
         Task<BalanceResponse> GetAsync();
     }
