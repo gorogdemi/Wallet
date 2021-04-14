@@ -1,0 +1,53 @@
+﻿@page "/transactions"
+
+<h1>Tranzakciók</h1>
+<br />
+
+@if (TransactionCollection is null)
+{
+    <div>Adatok betöltése...</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th><a href="transactions/create" class="btn btn-primary edit-btn">Új</a></th>
+                <th>Név</th>
+                <th>Teljes</th>
+                <th>Készpénz</th>
+                <th>Bankszámla</th>
+                <th>Komment</th>
+                <th>Dátum</th>
+                <th>Típus</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in TransactionCollection)
+            {
+                <tr>
+                    <td></td>
+                    <td>@transaction.Name</td>
+                    <td>@transaction.SumAmount Ft</td>
+                    <td>@transaction.CashAmount Ft</td>
+                    <td>@transaction.BankAmount Ft</td>
+                    <td>@transaction.Comment</td>
+                    <td>@transaction.Date</td>
+                    <td>@(transaction.Type == 0 ? "Kiadás" : "Bevétel")</td>
+                    <td>
+                        <a href="@($"transactions/edit/{transaction.Id}")" class="btn btn-primary table-btn">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <button @onclick="() => DeleteAsync(transaction.Id)" class="btn btn-primary table-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

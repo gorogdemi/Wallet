@@ -5,9 +5,9 @@ using Wallet.Contracts.Responses;
 
 namespace Wallet.UI.Services
 {
-    internal interface ITransactionService
+    public interface ITransactionService
     {
-        Task<TransactionResponse> CreateAsync(TransactionRequest request);
+        Task<bool> CreateAsync(TransactionRequest request);
 
         Task<bool> DeleteAsync(int id);
 
