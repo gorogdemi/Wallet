@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Wallet.Contracts.Requests;
@@ -7,6 +8,7 @@ using Wallet.UI.Services;
 
 namespace Wallet.UI.Pages.Transactions
 {
+    [Authorize]
     public partial class Create
     {
         [Inject]

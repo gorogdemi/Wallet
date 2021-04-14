@@ -16,14 +16,14 @@ namespace Wallet.UI
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
 
-            builder.Services.AddHttpClient("WebApi", client => client.BaseAddress = new Uri("http://localhost:5003/"));
+            builder.Services.AddHttpClient("WebApi", client => client.BaseAddress = new Uri("https://localhost:5001/"));
 
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IBalanceService, BalanceService>();
-            builder.Services.AddScoped<ITransactionService, DummyTransactionService>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
 
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("WebApi"));
 

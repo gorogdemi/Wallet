@@ -15,7 +15,11 @@ namespace Wallet.UI.Pages.Transactions
         [Inject]
         public ITransactionService TransactionService { get; set; }
 
-        protected Task DeleteAsync(int id) => TransactionService.DeleteAsync(id);
+        protected async Task DeleteAsync(int id)
+        {
+            await TransactionService.DeleteAsync(id);
+            TransactionCollection = await TransactionService.GetAsync();
+        }
 
         protected override async Task OnInitializedAsync()
         {

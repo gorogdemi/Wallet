@@ -30,12 +30,12 @@ else
                 <tr>
                     <td></td>
                     <td>@transaction.Name</td>
-                    <td>@transaction.SumAmount</td>
-                    <td>@transaction.CashAmount</td>
-                    <td>@transaction.BankAmount</td>
+                    <td>@transaction.SumAmount Ft</td>
+                    <td>@transaction.CashAmount Ft</td>
+                    <td>@transaction.BankAmount Ft</td>
                     <td>@transaction.Comment</td>
                     <td>@transaction.Date</td>
-                    <td>@transaction.Type</td>
+                    <td>@(transaction.Type == 0 ? "Kiadás" : "Bevétel")</td>
                     <td>
                         <a href="@($"transactions/edit/{transaction.Id}")" class="btn btn-primary table-btn">
                             <i class="fas fa-edit"></i>

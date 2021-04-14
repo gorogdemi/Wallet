@@ -1,4 +1,4 @@
-﻿@page "/transactions/edit/{TransactionId}"
+﻿@page "/transactions/edit/{TransactionId:int}"
 
 @if (ErrorMessage != null)
 {
@@ -9,39 +9,39 @@
 
 <h1>Tranzakció módosítás</h1>
 <section>
-    <EditForm Model="@Transaction" OnValidSubmit="@EditAsync">
+    <EditForm Model="@TransactionRequest" OnValidSubmit="@EditAsync">
         <DataAnnotationsValidator />
         <ValidationSummary></ValidationSummary>
         <div class="form-group row">
             <label for="name" class="col-sm-3">Név: </label>
-            <InputText id="name" class="form-control col-sm-8" @bind-Value="@Transaction.Name"></InputText>
-            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Transaction.Name)" />
+            <InputText id="name" class="form-control col-sm-8" @bind-Value="@TransactionRequest.Name"></InputText>
+            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => TransactionRequest.Name)" />
         </div>
 
         <div class="form-group row">
             <label for="bankAmount" class="col-sm-3">Bankszámla: </label>
-            <InputNumber id="bankAmount" class="form-control col-sm-8" @bind-Value="@Transaction.BankAmount"></InputNumber>
+            <InputNumber id="bankAmount" class="form-control col-sm-8" @bind-Value="@TransactionRequest.BankAmount"></InputNumber>
         </div>
 
         <div class="form-group row">
             <label for="cashAmount" class="col-sm-3">Készpénz: </label>
-            <InputNumber id="cashAmount" class="form-control col-sm-8" @bind-Value="@Transaction.CashAmount"></InputNumber>
+            <InputNumber id="cashAmount" class="form-control col-sm-8" @bind-Value="@TransactionRequest.CashAmount"></InputNumber>
         </div>
 
         <div class="form-group row">
             <label for="comment" class="col-sm-3">Komment: </label>
-            <InputText id="comment" class="form-control col-sm-8" @bind-Value="@Transaction.Comment"></InputText>
-            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => Transaction.Comment)" />
+            <InputText id="comment" class="form-control col-sm-8" @bind-Value="@TransactionRequest.Comment"></InputText>
+            <ValidationMessage class="offset-sm-3 col-sm-8" For="@(() => TransactionRequest.Comment)" />
         </div>
 
         <div class="form-group row">
             <label for="date" class="col-sm-3">Dátum: </label>
-            <InputDate id="date" class="form-control col-sm-8" @bind-Value="@Transaction.Date"></InputDate>
+            <InputDate id="date" class="form-control col-sm-8" @bind-Value="@TransactionRequest.Date"></InputDate>
         </div>
 
         <div class="form-group row">
             <label for="type" class="col-sm-3">Tranzakció típus: </label>
-            <InputSelect id="type" class="form-control col-sm-8" @bind-Value=@Transaction.Type>
+            <InputSelect id="type" class="form-control col-sm-8" @bind-Value=@TransactionRequest.Type>
                 <option value="@(0)">Költség</option>
                 <option value="@(1)">Bevétel</option>
             </InputSelect>
