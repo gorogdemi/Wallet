@@ -80,8 +80,8 @@ namespace Wallet.Api
             var provider = "SqlServer";
             services.AddDbContext<WalletContext>(options => _ = provider switch
             {
-                "Postgres" => options.UseNpgsql(_configuration.GetConnectionString("Postgres")),
-                "SqlServer" => options.UseSqlServer(_configuration.GetConnectionString("LocalDb")),
+                "Postgres" => options.UseNpgsql(_configuration.GetConnectionString("Postgres")).UseLazyLoadingProxies(),
+                "SqlServer" => options.UseSqlServer(_configuration.GetConnectionString("LocalDb")).UseLazyLoadingProxies(),
                 _ => throw new Exception($"Unsupported provider: {provider}")
             });
 
