@@ -10,6 +10,8 @@ namespace Wallet.Contracts.Responses
 
         public int? CategoryId { get; set; }
 
+        public string CategoryName { get; set; }
+
         public string Comment { get; set; }
 
         public DateTime Date { get; set; }
