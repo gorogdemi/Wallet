@@ -12,7 +12,6 @@ namespace Wallet.Api.Domain
 
         public virtual Category Category { get; set; }
 
-        [ForeignKey(nameof(Category))]
         public int? CategoryId { get; set; }
 
         [MaxLength(255)]
@@ -30,7 +29,6 @@ namespace Wallet.Api.Domain
 
         public virtual User User { get; set; }
 
-        [ForeignKey(nameof(User))]
         [Required]
         public string UserId { get; set; }
     }

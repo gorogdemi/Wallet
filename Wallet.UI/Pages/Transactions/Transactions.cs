@@ -9,8 +9,6 @@ namespace Wallet.UI.Pages.Transactions
     [Authorize]
     public partial class Transactions
     {
-        public bool Checked { get; set; }
-
         public string SearchInput { get; set; }
 
         public async Task DeleteAsync(int id)
@@ -33,7 +31,7 @@ namespace Wallet.UI.Pages.Transactions
 
         private Task LoadTransactionAsync() =>
             HandleRequest(
-                request: () => Service.GetAsync<List<TransactionResponse>>(UrlHelper.GetTransactionUrlWith(SearchInput)),
+                request: () => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(SearchInput) ? UrlHelper.TransactionUrl : UrlHelper.GetTransactionUrlWith(SearchInput)),
                 onSuccess: r => Data = r,
                 errorMessage: "Tranzakciók betöltése sikertelen!");
 

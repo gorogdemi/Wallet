@@ -8,14 +8,9 @@
 <br />
 
 <div class="input-group mb-3">
-    <div class="input-group-prepend">
-        <div class="input-group-text">
-            <input type="checkbox" @bind=Checked>
-        </div>
-    </div>
-    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." disabled="@Checked" @bind="@SearchInput">
+    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." @bind="@SearchInput">
     <div class="input-group-append">
-        <button class="btn btn-primary edit-btn" type="button" @onclick="LoadTransactionAsync" disabled="@Checked">Button</button>
+        <button class="btn btn-primary edit-btn" type="button" @onclick="LoadTransactionAsync">Keresés</button>
     </div>
 </div>
 

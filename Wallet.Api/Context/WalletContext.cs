@@ -13,5 +13,24 @@ namespace Wallet.Api.Context
         public WalletContext(DbContextOptions<WalletContext> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                 .Entity<Transaction>()
+                 .HasOne(x => x.Category)
+                 .WithMany(x => x.Transactions)
+                 .HasForeignKey(x => x.CategoryId)
+                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder
+                 .Entity<Transaction>()
+                 .HasOne(x => x.User)
+                 .WithMany(x => x.Transactions)
+                 .HasForeignKey(x => x.UserId)
+                 .OnDelete(DeleteBehavior.NoAction);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

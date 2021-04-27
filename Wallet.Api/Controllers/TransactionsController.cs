@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -121,12 +120,11 @@ namespace Wallet.Api.Controllers
             return Ok(trensactionResponse);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TransactionResponse>>> Search(String text)
+        [HttpGet("search/{text}")]
+        public async Task<ActionResult<IEnumerable<TransactionResponse>>> Search(string text)
         {
             var userId = HttpContext.GetUserId();
-            var lowerCaseText = text.ToLower();
-            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId && x.Name.Contains(text)).Select(x => new TransactionResponse
+            var transcations = await _walletContext.Transactions.Where(x => x.UserId == userId && x.Name.ToLower().Contains(text.ToLower())).Select(x => new TransactionResponse
             {
                 Name = x.Name,
                 CashAmount = x.CashAmount,
