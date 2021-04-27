@@ -1,9 +1,25 @@
 ﻿@page "/transactions"
+@inherits CategoryAwareComponentBase<List<TransactionResponse>>
 
 <h1>Tranzakciók</h1>
+
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
+
 <br />
 
-@if (TransactionCollection is null)
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <div class="input-group-text">
+            <input type="checkbox" @bind=Checked>
+        </div>
+    </div>
+    <input type="text" class="form-control" placeholder="Írja be a tranzakció nevét.." disabled="@Checked" @bind="@SearchInput">
+    <div class="input-group-append">
+        <button class="btn btn-primary edit-btn" type="button" @onclick="LoadTransactionAsync" disabled="@Checked">Button</button>
+    </div>
+</div>
+
+@if (IsLoading)
 {
     <div>Adatok betöltése...</div>
 }
@@ -20,12 +36,13 @@ else
                 <th>Komment</th>
                 <th>Dátum</th>
                 <th>Típus</th>
+                <th>Kategória</th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var transaction in TransactionCollection)
+            @foreach (var transaction in Data)
             {
                 <tr>
                     <td></td>
@@ -36,6 +53,7 @@ else
                     <td>@transaction.Comment</td>
                     <td>@transaction.Date</td>
                     <td>@(transaction.Type == 0 ? "Kiadás" : "Bevétel")</td>
+                    <th>@(GetCategoryName(transaction.CategoryId))</th>
                     <td>
                         <a href="@($"transactions/edit/{transaction.Id}")" class="btn btn-primary table-btn">
                             <i class="fas fa-edit"></i>

@@ -9,8 +9,8 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    <span>@context.User.FindFirst("sub").Value</span>
-                    <NavLink class="nav-link" href="logout">Kijelentkezés</NavLink>
+                    <span style="margin-right:10px">@context.User.FindFirst("sub").Value</span>
+                    <button class="btn btn-primary" @onclick="LogoutAsync">Kijelentkezés</button>
                 </Authorized>
                 <NotAuthorized>
                     <NavLink class="nav-link" href="login">Bejelentkezés</NavLink>

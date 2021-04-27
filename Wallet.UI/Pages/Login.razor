@@ -1,30 +1,25 @@
 ﻿@page "/login"
+@inherits WalletComponentBase<LoginRequest, IAuthenticationService>
 
 <h1>Bejelentkezés</h1>
+<ErrorMessageComponent ErrorMessage="@ErrorMessage"></ErrorMessageComponent>
 
-@if (ErrorMessage != null)
-{
-    <div class="alert alert-danger" role="alert">
-        <p>@ErrorMessage</p>
-    </div>
-}
-
-<EditForm Model="Request" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
+<EditForm Model="Data" OnValidSubmit="LoginAsync" class="card card-body bg-light mt-5">
     <DataAnnotationsValidator />
 
     <div class="form-group row">
         <label for="email" class="col-md-2 col-form-label">E-mail cím:</label>
         <div class="col-md-10">
-            <InputText id="email" type="email" class="form-control" @bind-Value="Request.Email" />
-            <ValidationMessage For="() => Request.Email" />
+            <InputText id="email" type="email" class="form-control" @bind-Value="Data.Email" />
+            <ValidationMessage For="() => Data.Email" />
         </div>
     </div>
 
     <div class="form-group row">
         <label for="password" class="col-md-2 col-form-label">Jelszó:</label>
         <div class="col-md-10">
-            <InputText id="password" type="password" class="form-control" @bind-Value="Request.Password" />
-            <ValidationMessage For="() => Request.Password" />
+            <InputText id="password" type="password" class="form-control" @bind-Value="Data.Password" />
+            <ValidationMessage For="() => Data.Password" />
         </div>
     </div>
 

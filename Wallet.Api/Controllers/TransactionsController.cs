@@ -109,7 +109,7 @@ namespace Wallet.Api.Controllers
                 CashAmount = transaction.CashAmount,
                 BankAmount = transaction.BankAmount,
                 CategoryId = transaction.CategoryId,
-                CategoryName = transaction.Category.Name,
+                CategoryName = transaction.Category?.Name,
                 Comment = transaction.Comment,
                 Date = transaction.Date,
                 Id = transaction.Id,
