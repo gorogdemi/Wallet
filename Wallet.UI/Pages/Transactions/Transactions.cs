@@ -1,29 +1,44 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Wallet.Contracts.Responses;
-using Wallet.UI.Services;
+using Wallet.UI.Helpers;
 
 namespace Wallet.UI.Pages.Transactions
 {
     [Authorize]
     public partial class Transactions
     {
-        public IEnumerable<TransactionResponse> TransactionCollection { get; private set; }
+        public string SearchInput { get; set; }
 
-        [Inject]
-        public ITransactionService TransactionService { get; set; }
-
-        protected async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            await TransactionService.DeleteAsync(id);
-            TransactionCollection = await TransactionService.GetAsync();
+            await HandleRequest(
+                request: () => Service.DeleteAsync(UrlHelper.GetTransactionUrlWith(id)),
+                onSuccess: async () =>
+                {
+                    await LoadTransactionsAsync();
+                    await LoadCategoriesAsync();
+                },
+                errorMessage: "Tranzakció törlése sikertelen!");
         }
 
         protected override async Task OnInitializedAsync()
         {
-            TransactionCollection = await TransactionService.GetAsync();
+            await LoadTransactionsAsync();
+            await base.OnInitializedAsync();
         }
+
+        private Task LoadTransactionAsync() =>
+            HandleRequest(
+                request: () => Service.GetAsync<List<TransactionResponse>>(string.IsNullOrEmpty(SearchInput) ? UrlHelper.TransactionUrl : UrlHelper.GetTransactionUrlWith(SearchInput)),
+                onSuccess: r => Data = r,
+                errorMessage: "Tranzakciók betöltése sikertelen!");
+
+        private Task LoadTransactionsAsync() =>
+            HandleRequest(
+                request: () => Service.GetAsync<List<TransactionResponse>>(UrlHelper.TransactionUrl),
+                onSuccess: r => Data = r,
+                errorMessage: "Tranzakciók betöltése sikertelen!");
     }
 }

@@ -340,7 +340,7 @@ namespace Wallet.Api.Migrations
             modelBuilder.Entity("Wallet.Api.Domain.Category", b =>
                 {
                     b.HasOne("Wallet.Api.Domain.User", "User")
-                        .WithMany()
+                        .WithMany("Categories")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -351,18 +351,31 @@ namespace Wallet.Api.Migrations
             modelBuilder.Entity("Wallet.Api.Domain.Transaction", b =>
                 {
                     b.HasOne("Wallet.Api.Domain.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .WithMany("Transactions")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Wallet.Api.Domain.User", "User")
-                        .WithMany()
+                        .WithMany("Transactions")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Category");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Wallet.Api.Domain.Category", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Wallet.Api.Domain.User", b =>
+                {
+                    b.Navigation("Categories");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

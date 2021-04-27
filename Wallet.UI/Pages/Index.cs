@@ -1,22 +1,21 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Wallet.Contracts.Responses;
-using Wallet.UI.Services;
+using Wallet.UI.Helpers;
 
 namespace Wallet.UI.Pages
 {
     [Authorize]
     public partial class Index
     {
-        public BalanceResponse Balance { get; private set; }
-
-        [Inject]
-        public IBalanceService BalanceService { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
-            Balance = await BalanceService.GetAsync();
+            await HandleRequest(
+                request: () => Service.GetAsync<BalanceResponse>(UrlHelper.BalanceUrl),
+                onSuccess: result => Data = result,
+                errorMessage: "Balansz lekérése sikertelen!");
+
+            await base.OnInitializedAsync();
         }
     }
 }

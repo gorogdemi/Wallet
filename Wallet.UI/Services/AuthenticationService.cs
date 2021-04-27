@@ -6,6 +6,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Wallet.Contracts.Requests;
 using Wallet.Contracts.Responses;
+using Wallet.UI.Helpers;
 using Wallet.UI.Services;
 
 namespace Wallet.UI
@@ -23,10 +24,10 @@ namespace Wallet.UI
             _authenticationStateProvider = authenticationStateProvider;
         }
 
-        public async Task<bool> LoginAsync(LoginRequest loginRequest)
+        public async Task LoginAsync(LoginRequest loginRequest)
         {
-            var authResult = await _httpClient.PostAsJsonAsync("api/authentication/login", loginRequest);
-            return await GetAuthenticationResponse(authResult);
+            var authResult = await _httpClient.PostAsJsonAsync(UrlHelper.LoginUrl, loginRequest);
+            await GetAuthenticationResponse(authResult);
         }
 
         public async Task LogoutAsync()
@@ -36,17 +37,17 @@ namespace Wallet.UI
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
-        public async Task<bool> RegisterAsync(RegistrationRequest registrationRequest)
+        public async Task RegisterAsync(RegistrationRequest registrationRequest)
         {
-            var authResult = await _httpClient.PostAsJsonAsync("api/authentication/register", registrationRequest);
-            return await GetAuthenticationResponse(authResult);
+            var authResult = await _httpClient.PostAsJsonAsync(UrlHelper.RegisterUrl, registrationRequest);
+            await GetAuthenticationResponse(authResult);
         }
 
-        private async Task<bool> GetAuthenticationResponse(HttpResponseMessage authResult)
+        private async Task GetAuthenticationResponse(HttpResponseMessage authResult)
         {
             if (!authResult.IsSuccessStatusCode)
             {
-                return false;
+                throw new HttpRequestException();
             }
 
             var json = await authResult.Content.ReadFromJsonAsync<AuthenticationSuccessResponse>();
@@ -54,8 +55,6 @@ namespace Wallet.UI
             await _localStorage.SetItemAsync("authToken", json.Token);
             ((JwtAuthenticationStateProvider)_authenticationStateProvider).NotifyUserAuthentication(json.Token);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", json.Token);
-
-            return true;
         }
     }
 }
